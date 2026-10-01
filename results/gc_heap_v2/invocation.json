@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "run_experiment.py",
+    "--flags",
+    "flags_gc_heap.json",
+    "--out",
+    "results/gc_heap_v2.csv"
+  ],
+  "image": "petclinic-bench:jdk25-v2",
+  "image_id": "sha256:2ca61a52a530407365cddc7f56106ed2291e5c5a04d058ea60d222ccebd0abd1",
+  "governor": "performance",
+  "no_turbo": "0",
+  "smt_active": "0",
+  "started": "2026-09-25T18:30:09.740701-04:00"
+}

@@ -1,0 +1,10 @@
+# Per-run raw artifacts (docker logs, gc.log files) — hundreds of MB,
+# regenerable by re-running the driver. The aggregated results CSVs (the
+# reviewable data) are tracked normally.
+**/runs/
+
+# AppCDS archives (about 120 MB each) — build artifacts, not source or data.
+**/cds/
+
+__pycache__/
+*.pyc

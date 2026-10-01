@@ -1,0 +1,5 @@
+# Only app/ and bench/ are needed to build the image.
+*
+!app/pom.xml
+!app/src
+!bench/src

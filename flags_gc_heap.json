@@ -1,0 +1,141 @@
+{
+  "container": {
+    "memory": "1024m",
+    "memswap": "1024m",
+    "cpuset_app": "0",
+    "cpuset_loadgen": "1",
+    "port": 9966,
+    "owner_count": 5010,
+    "k6_pre_vus": 50,
+    "k6_max_vus": 200,
+    "env": {
+      "HEAP_CACHE_SIZE": "120000"
+    }
+  },
+  "_note": "JDK 25 default GC vs G1 on one CPU, full cross with AppCDS (on/off) and compact object headers (on/off). Base cells: default_untuned (no flags), default_small (Serial, pinned 128m), g1_small (G1, pinned 128m). On 1 CPU the JDK 25 default is Serial (G1 needs 2+ CPUs and ~1792MB); expected_gc makes the harness fail any run where the JVM picked something else. appcds=true: the harness primes a dynamic archive per combo per batch and maps it with -Xshare:on (see run_experiment.py). HEAP_CACHE_SIZE=120000 adds ~20MB of resident objects (measured ~169 B/entry on top of a 43.9MB baseline live set, 2026-09-25), for ~64MB live without compact headers: 50% of the 128m heap. No GC tuning flags. default_small_aa duplicates default_small to measure run-to-run noise and is not crossed.",
+  "combos": [
+    {
+      "name": "default_untuned",
+      "description": "No flags at all: JDK 25 ergonomics (Serial, 16m initial heap, 256m max)",
+      "expected_gc": "serial",
+      "flags": []
+    },
+    {
+      "name": "default_untuned_coh",
+      "description": "No flags at all: JDK 25 ergonomics (Serial, 16m initial heap, 256m max), compact object headers on",
+      "expected_gc": "serial",
+      "flags": [
+        "-XX:+UseCompactObjectHeaders"
+      ]
+    },
+    {
+      "name": "default_untuned_cds",
+      "description": "No flags at all: JDK 25 ergonomics (Serial, 16m initial heap, 256m max), AppCDS on",
+      "expected_gc": "serial",
+      "flags": [],
+      "appcds": true
+    },
+    {
+      "name": "default_untuned_cds_coh",
+      "description": "No flags at all: JDK 25 ergonomics (Serial, 16m initial heap, 256m max), AppCDS on, compact object headers on",
+      "expected_gc": "serial",
+      "flags": [
+        "-XX:+UseCompactObjectHeaders"
+      ],
+      "appcds": true
+    },
+    {
+      "name": "default_small",
+      "description": "JDK 25 default GC (Serial), heap pinned at 128m",
+      "expected_gc": "serial",
+      "flags": [
+        "-Xms128m",
+        "-Xmx128m"
+      ]
+    },
+    {
+      "name": "default_small_aa",
+      "description": "Identical to default_small; noise-floor control",
+      "expected_gc": "serial",
+      "flags": [
+        "-Xms128m",
+        "-Xmx128m"
+      ]
+    },
+    {
+      "name": "default_small_coh",
+      "description": "JDK 25 default GC (Serial), heap pinned at 128m, compact object headers on",
+      "expected_gc": "serial",
+      "flags": [
+        "-Xms128m",
+        "-Xmx128m",
+        "-XX:+UseCompactObjectHeaders"
+      ]
+    },
+    {
+      "name": "default_small_cds",
+      "description": "JDK 25 default GC (Serial), heap pinned at 128m, AppCDS on",
+      "expected_gc": "serial",
+      "flags": [
+        "-Xms128m",
+        "-Xmx128m"
+      ],
+      "appcds": true
+    },
+    {
+      "name": "default_small_cds_coh",
+      "description": "JDK 25 default GC (Serial), heap pinned at 128m, AppCDS on, compact object headers on",
+      "expected_gc": "serial",
+      "flags": [
+        "-Xms128m",
+        "-Xmx128m",
+        "-XX:+UseCompactObjectHeaders"
+      ],
+      "appcds": true
+    },
+    {
+      "name": "g1_small",
+      "description": "G1, heap pinned at 128m",
+      "expected_gc": "g1",
+      "flags": [
+        "-XX:+UseG1GC",
+        "-Xms128m",
+        "-Xmx128m"
+      ]
+    },
+    {
+      "name": "g1_small_coh",
+      "description": "G1, heap pinned at 128m, compact object headers on",
+      "expected_gc": "g1",
+      "flags": [
+        "-XX:+UseG1GC",
+        "-Xms128m",
+        "-Xmx128m",
+        "-XX:+UseCompactObjectHeaders"
+      ]
+    },
+    {
+      "name": "g1_small_cds",
+      "description": "G1, heap pinned at 128m, AppCDS on",
+      "expected_gc": "g1",
+      "flags": [
+        "-XX:+UseG1GC",
+        "-Xms128m",
+        "-Xmx128m"
+      ],
+      "appcds": true
+    },
+    {
+      "name": "g1_small_cds_coh",
+      "description": "G1, heap pinned at 128m, AppCDS on, compact object headers on",
+      "expected_gc": "g1",
+      "flags": [
+        "-XX:+UseG1GC",
+        "-Xms128m",
+        "-Xmx128m",
+        "-XX:+UseCompactObjectHeaders"
+      ],
+      "appcds": true
+    }
+  ]
+}
